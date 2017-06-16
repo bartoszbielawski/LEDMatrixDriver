@@ -13,13 +13,13 @@
  * 	* This driver uses hardware SPI which makes it much faster (with exception of soft SS)
  * 	* Display or displayRow() has to be used to refresh the display
  * 	* up to 255 segments are supported.
+ * 	* can use an external memory or self-allocated buffer
  */
 
 #ifndef LEDMATRIXDRIVER_H_
 #define LEDMATRIXDRIVER_H_
 
 #include <SPI.h>
-#include <vector>
 
 class LEDMatrixDriver
 {
@@ -31,9 +31,15 @@ class LEDMatrixDriver
 	const static uint16_t DECODE =		0x0900;
 
 	public:
-		//with N segments and ssPin as SS
-		LEDMatrixDriver(uint8_t N, uint8_t ssPin);
-		virtual ~LEDMatrixDriver() = default;
+		//with N segments and ssPin as SS,
+		//an already allocated buffer can be provided as well
+		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer = nullptr);
+		~LEDMatrixDriver();
+
+		//we don't want to copy the object
+		LEDMatrixDriver(const LEDMatrixDriver& other) = delete;
+		LEDMatrixDriver(LEDMatrixDriver&& other) = delete;
+		LEDMatrixDriver& operator=(const LEDMatrixDriver& other) = delete;
 
 		//all these commands work on ALL segments
 		void setEnabled(bool enabled);
@@ -46,13 +52,17 @@ class LEDMatrixDriver
 		void display();
 		//flush a single row to the display
 		void displayRow(uint8_t row) {_displayRow(row);}
+		//clear the framebuffer
+		void clear() {memset(frameBuffer, 0, 8*N);}
+
 	private:
 		void _sendCommand(uint16_t command);
 		void _displayRow(uint8_t row);
 
 		const uint8_t N;
 		SPISettings spiSettings;
-		std::vector<uint8_t> frameBuffer;
+		uint8_t* frameBuffer;
+		bool selfAllocated;
 		uint8_t ssPin;
 };
 
