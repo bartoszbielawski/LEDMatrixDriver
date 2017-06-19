@@ -47,6 +47,7 @@ class LEDMatrixDriver
 		void setPixel(uint16_t x, uint16_t y, bool enabled);
 		void setColumn(uint16_t x, uint8_t value);
 		uint8_t getSegments() const {return N;}
+		uint8_t* getFrameBuffer() const {return frameBuffer;}
 
 		//flush the data to the display
 		void display();
