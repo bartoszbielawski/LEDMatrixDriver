@@ -29,7 +29,8 @@ class LEDMatrixDriver
 	const static uint16_t INTENSITY =	0x0A00;
 	const static uint16_t SCAN_LIMIT =	0x0B00;
 	const static uint16_t DECODE =		0x0900;
-
+	
+	
 	public:
 		//with N segments and ssPin as SS,
 		//an already allocated buffer can be provided as well
@@ -54,6 +55,17 @@ class LEDMatrixDriver
 		void displayRow(uint8_t row) {_displayRow(row);}
 		//clear the framebuffer
 		void clear() {memset(frameBuffer, 0, 8*N);}
+		
+		enum class scrollDirection 
+		{
+			scrollUp = 0,
+			scrollDown,
+			scrollLeft,
+			scrollRight
+		};
+		
+		//scroll the framebuffer 1 pixel in the given direction
+		void scroll( scrollDirection direction );
 
 	private:
 		void _sendCommand(uint16_t command);

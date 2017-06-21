@@ -8,11 +8,11 @@
 #include "LEDMatrixDriver.hpp"
 #include <Arduino.h>
 
-LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer):
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* fb):
 	N(N),
 	spiSettings(5000000, MSBFIRST, SPI_MODE0),
-	frameBuffer(frameBuffer),
-	selfAllocated(frameBuffer == nullptr),
+	frameBuffer(fb),
+	selfAllocated(fb == nullptr),
 	ssPin(ssPin)
 {
 	if (selfAllocated)
@@ -110,5 +110,59 @@ void LEDMatrixDriver::display()
 	for (uint8_t y = 0; y < 8; y++)
 	{
 		_displayRow(y);
+	}
+}
+
+void LEDMatrixDriver::scroll( scrollDirection direction )
+{
+	int cnt = 0;
+	uint8_t* buf = NULL;
+	switch( direction )
+	{
+		case scrollDirection::scrollUp:
+			cnt = 7*(N);
+			memcpy(frameBuffer, frameBuffer + N, cnt);
+			memset(frameBuffer+cnt, 0, N);		// Clear last row
+			break;
+			
+		case scrollDirection::scrollDown:
+			cnt = 7*N;
+			
+			// Scrolling down requires a buffer  (memcpy would read the memory it just copied)
+			buf = new uint8_t[cnt];
+			
+			memcpy(buf, frameBuffer, cnt);
+			memcpy(frameBuffer+N, buf, cnt);
+			
+			memset(frameBuffer, 0, N);		// Clear first row
+			
+			// clean up
+			delete[] buf;
+			
+			break;
+			
+		case scrollDirection::scrollRight:
+			// Scrolling right needs to be done by bit shifting every uint8_t in the frame buffer
+			// Bits that overlap need to be carried to the next cell in a row
+			for( int i = 8*N; i >= 0; i-- )
+			{
+				uint8_t n = frameBuffer[i] & 1;
+				frameBuffer[i] >>= 1;
+				if( (i+1)%N > 0 )
+					frameBuffer[i+1] |= n<<7;
+			}
+			break;
+			
+		case scrollDirection::scrollLeft:
+			// Scrolling left needs to be done by bit shifting every uint8_t in the frame buffer
+			// Bits that overlap need to be carried to the next cell in a row
+			for( int i = 0; i < 8*N; i++ )
+			{
+				uint8_t n = frameBuffer[i] & B10000000;
+				frameBuffer[i] <<= 1;
+				if( i%N > 0 )
+					frameBuffer[i-1] |= n>>7;
+			}
+			break;
 	}
 }
