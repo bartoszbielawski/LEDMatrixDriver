@@ -8,11 +8,11 @@
 #include "LEDMatrixDriver.hpp"
 #include <Arduino.h>
 
-LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* fb):
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
 	N(N),
 	spiSettings(5000000, MSBFIRST, SPI_MODE0),
-	frameBuffer(fb),
-	selfAllocated(fb == nullptr),
+	frameBuffer(frameBuffer_),
+	selfAllocated(frameBuffer_ == nullptr),
 	ssPin(ssPin)
 {
 	if (selfAllocated)
