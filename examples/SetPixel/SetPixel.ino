@@ -7,13 +7,12 @@
 // Other pins are arduino specific SPI pins (MOSI=DIN of the LEDMatrix and CLK) see https://www.arduino.cc/en/Reference/SPI
 const uint8_t LEDMATRIX_CS_PIN = 9;
 
-// Define LED Matrix dimensions (0-n) - eg: 32x8 = 31x7, 4 Segments; 8x8 = 7x7, 1 segment
-const int LEDMATRIX_SEGMENTS = 1;		// Number of segments you want to control
-const int LEDMATRIX_WIDTH = (LEDMATRIX_SEGMENTS * 8) - 1;  
+// Define LED Matrix dimensions (0-n) - eg: 32x8 = 31x7
+const int LEDMATRIX_WIDTH = 7;  
 const int LEDMATRIX_HEIGHT = 7;
 
 // The LEDMatrixDriver class instance
-LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
+LEDMatrixDrive lmd(4, LEDMATRIX_CS_PIN);
 
 void setup() {
   // init the display
