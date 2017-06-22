@@ -120,25 +120,15 @@ void LEDMatrixDriver::scroll( scrollDirection direction )
 	switch( direction )
 	{
 		case scrollDirection::scrollUp:
-			cnt = 7*(N);
-			memcpy(frameBuffer, frameBuffer + N, cnt);
+			cnt = 7*(N);	// moving 7 rows of N segments
+			memmove(frameBuffer, frameBuffer + N, cnt);
 			memset(frameBuffer+cnt, 0, N);		// Clear last row
 			break;
 			
 		case scrollDirection::scrollDown:
-			cnt = 7*N;
-			
-			// Scrolling down requires a buffer  (memcpy would read the memory it just copied)
-			buf = new uint8_t[cnt];
-			
-			memcpy(buf, frameBuffer, cnt);
-			memcpy(frameBuffer+N, buf, cnt);
-			
+			cnt = 7*N; // moving 7 rows of N segments
+			memmove(frameBuffer+N, frameBuffer, cnt);
 			memset(frameBuffer, 0, N);		// Clear first row
-			
-			// clean up
-			delete[] buf;
-			
 			break;
 			
 		case scrollDirection::scrollRight:
@@ -155,7 +145,7 @@ void LEDMatrixDriver::scroll( scrollDirection direction )
 			
 		case scrollDirection::scrollLeft:
 			// Scrolling left needs to be done by bit shifting every uint8_t in the frame buffer
-			// Bits that overlap need to be carried to the next cell in a row
+			// Bits that overlap need to be carried to the prev cell in a row
 			for( int i = 0; i < 8*N; i++ )
 			{
 				uint8_t n = frameBuffer[i] & B10000000;
