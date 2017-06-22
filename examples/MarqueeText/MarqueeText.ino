@@ -8,18 +8,17 @@
 const uint8_t LEDMATRIX_CS_PIN = 9;
 
 // Define LED Matrix dimensions (0-n) - eg: 32x8 = 31x7
-const int LEDMATRIX_SEGMENTS = 4;
 const int LEDMATRIX_WIDTH = 31;  
 const int LEDMATRIX_HEIGHT = 7;
+const int LEDMATRIX_SEGMENTS = 1;
 
 // The LEDMatrixDriver class instance
-LEDMatrixDriver *lmd = NULL;
+LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 
 void setup() {
   // init the display
-  lmd = new LEDMatrixDriver(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
-  lmd->setEnabled(true);
-  lmd->setIntensity(2);   // 0 = low, 10 = high
+  lmd.setEnabled(true);
+  lmd.setIntensity(2);   // 0 = low, 10 = high
 }
 
 int x=0, y=0;   // start top left
@@ -99,10 +98,10 @@ void loop()
 {
  // Draw the text to the current position
  drawString(text, len, x, 0);
-   // In case you wonder why we don't have to call lmd->clear() in every loop: The font has a opaque (black) background...
+   // In case you wonder why we don't have to call lmd.clear() in every loop: The font has a opaque (black) background...
  
  // Toggle display of the new framebuffer
- lmd->display();
+ lmd.display();
 
  // Wait to let the human read the display
  delay(ANIM_DELAY);
@@ -144,7 +143,7 @@ void drawSprite( byte* sprite, int x, int y, int width, int height )
   {
     for( int ix = 0; ix < width; ix++ )
     {
-      lmd->setPixel(x + ix, y + iy, (bool)(sprite[iy] & mask ));
+      lmd.setPixel(x + ix, y + iy, (bool)(sprite[iy] & mask ));
 
       // shift the mask by one pixel to the right
       mask = mask >> 1;
