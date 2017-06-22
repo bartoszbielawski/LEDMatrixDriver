@@ -10,9 +10,10 @@ const uint8_t LEDMATRIX_CS_PIN = 9;
 // Define LED Matrix dimensions (0-n) - eg: 32x8 = 31x7
 const int LEDMATRIX_WIDTH = 7;  
 const int LEDMATRIX_HEIGHT = 7;
+const int LEDMATRIX_SEGMENTS = 1;
 
 // The LEDMatrixDriver class instance
-LEDMatrixDrive lmd(4, LEDMATRIX_CS_PIN);
+LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 
 void setup() {
   // init the display

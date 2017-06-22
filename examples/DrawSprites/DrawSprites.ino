@@ -10,15 +10,15 @@ const uint8_t LEDMATRIX_CS_PIN = 9;
 // Define LED Matrix dimensions (0-n) - eg: 32x8 = 31x7
 const int LEDMATRIX_WIDTH = 31;  
 const int LEDMATRIX_HEIGHT = 7;
+const int LEDMATRIX_SEGMENTS = 1;
 
 // The LEDMatrixDriver class instance
-LEDMatrixDriver *lmd = NULL;
+LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 
 void setup() {
   // init the display
-  lmd = new LEDMatrixDriver(4, LEDMATRIX_CS_PIN);
-  lmd->setEnabled(true);
-  lmd->setIntensity(2);   // 0 = low, 10 = high
+  lmd.setEnabled(true);
+  lmd.setIntensity(2);   // 0 = low, 10 = high
 }
 
 int x=-1, y=0;   // start top left
@@ -84,32 +84,32 @@ const int ANIM_DELAY = 100;
 void loop() {
 
   drawSprite( (byte*)&a, x++, 0, 8, 8 );
-  lmd->display();
+  lmd.display();
   delay(ANIM_DELAY);
 
-  lmd->clear();
+  lmd.clear();
   drawSprite( (byte*)&b, x++, 0, 8, 8 );
-  lmd->display();
+  lmd.display();
   delay(ANIM_DELAY);
 
-  lmd->clear();
+  lmd.clear();
   drawSprite( (byte*)&c, x++, 0, 8, 8 );
-  lmd->display();
+  lmd.display();
   delay(ANIM_DELAY);
 
-  lmd->clear();
+  lmd.clear();
   drawSprite( (byte*)&d, x++, 0, 8, 8 );
-  lmd->display();
+  lmd.display();
   delay(ANIM_DELAY);
 
-  lmd->clear();
+  lmd.clear();
   drawSprite( (byte*)&e, x++, 0, 8, 8 );
-  lmd->display();
+  lmd.display();
   delay(ANIM_DELAY);
 
-  lmd->clear();
+  lmd.clear();
   drawSprite( (byte*)&f, x++, 0, 8, 8 );
-  lmd->display();
+  lmd.display();
   delay(ANIM_DELAY);
 
   if( x > LEDMATRIX_WIDTH )
@@ -123,7 +123,7 @@ void drawSprite( byte* sprite, int x, int y, int width, int height )
   {
     for( int ix = 0; ix < width; ix++ )
     {
-      lmd->setPixel(x + ix, y + iy, (bool)(sprite[iy] & mask ));
+      lmd.setPixel(x + ix, y + iy, (bool)(sprite[iy] & mask ));
       mask = mask >> 1;
     }
     mask = B10000000;
