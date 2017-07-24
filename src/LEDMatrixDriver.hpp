@@ -56,6 +56,8 @@ class LEDMatrixDriver
 		void displayRow(uint8_t row) {_displayRow(row);}
 		//clear the framebuffer
 		void clear() {memset(frameBuffer, 0, 8*N);}
+		//set all leds on
+		void full() {memset(frameBuffer, 0xff, 8*N);}
 		
 		enum class scrollDirection 
 		{
@@ -67,6 +69,17 @@ class LEDMatrixDriver
 		
 		//scroll the framebuffer 1 pixel in the given direction
 		void scroll( scrollDirection direction );
+
+		//n is the number of segment, starts from 0
+		void setPixel(uint8_t n, uint8_t x, uint8_t y, bool enabled);
+		void setColumn(uint8_t n, uint8_t x, uint8_t value);
+		void setRow(uint8_t n, uint8_t y, uint8_t value);
+		void clear(uint8_t n);
+		void full(uint8_t n);
+
+		//decorate or separate lines
+		void setRepeatRow(uint8_t y, uint8_t value);
+		void setRepeatRow16(uint8_t y, uint16_t value);
 
 	private:
 		void _sendCommand(uint16_t command);
