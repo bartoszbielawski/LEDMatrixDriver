@@ -156,3 +156,65 @@ void LEDMatrixDriver::scroll( scrollDirection direction )
 			break;
 	}
 }
+
+void LEDMatrixDriver::setPixel(uint8_t n, uint8_t x, uint8_t y, bool enabled)
+{
+	if (y >= 8 || x >= 8 || n < 0 || n >= N)
+		return;
+	setPixel(x + 8 * n, y, enabled);
+}
+
+void LEDMatrixDriver::clear(uint8_t n)
+{
+	if (n < 0 || n >= N)
+		return;
+	for (uint8_t y = 0; y < 8; ++y) {
+		setRow(n, y, 0);
+	}
+}
+
+void LEDMatrixDriver::setColumn(uint8_t n, uint8_t x, uint8_t value)
+{
+	if (x >= 8 * N || n < 0 || n >= N)
+		return;
+	setColumn( x + 8 * n , value);
+}
+
+void LEDMatrixDriver::setRow(uint8_t n, uint8_t y, uint8_t value)
+{
+	if (y >= 8 || n < 0 || n >= N)
+		return;
+	frameBuffer[N * y + n] = value;
+}
+
+void LEDMatrixDriver::setRepeatRow(uint8_t y, uint8_t value)
+{
+	if (y >= 8)
+		return;
+	for (uint8_t n = 0; n < N; ++n)
+	{
+		setRow(n, y, value);
+	}
+}
+
+void LEDMatrixDriver::setRepeatRow16(uint8_t y, uint16_t value)
+{
+	if (y >= 8 || N < 2)
+		return;
+	uint8_t high = value >> 8;
+	for (uint8_t n = 0; n < N; ++n)
+	{
+		setRow(n++, y, high);
+		setRow(n, y, value);
+	}
+}
+
+void LEDMatrixDriver::full(uint8_t n)
+{
+	if (n < 0 || n >= N)
+		return;
+	for (uint8_t y = 0; y < 8; ++y)
+	{
+		setRow(n, y, 0xff);
+	}
+}
