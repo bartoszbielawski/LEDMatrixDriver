@@ -50,6 +50,11 @@ class LEDMatrixDriver
 		uint8_t getSegments() const {return N;}
 		uint8_t* getFrameBuffer() const {return frameBuffer;}
 
+		//functions for 7-segment displays
+		void setScanLimit(uint8_t level);
+		void setDecode(uint8_t mask);
+		void setDigit(uint16_t digit, uint8_t value, bool dot = false);
+
 		//flush the data to the display
 		void display();
 		//flush a single row to the display
@@ -67,6 +72,14 @@ class LEDMatrixDriver
 		
 		//scroll the framebuffer 1 pixel in the given direction
 		void scroll( scrollDirection direction );
+
+		// BCD Code B values
+		const static uint8_t BCD_DASH =     0x0A;
+		const static uint8_t BCD_E =        0x0B;
+		const static uint8_t BCD_H =        0x0C;
+		const static uint8_t BCD_L =        0x0D;
+		const static uint8_t BCD_P =        0x0E;
+		const static uint8_t BCD_BLANK =    0x0F;
 
 	private:
 		void _sendCommand(uint16_t command);
