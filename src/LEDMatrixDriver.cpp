@@ -80,6 +80,61 @@ void LEDMatrixDriver::setIntensity(uint8_t level)
 	_sendCommand(INTENSITY | level);
 }
 
+/**
+ * Scan only digits 0..level.
+ *
+ * Beware: For level <=2 you must make sure that R_SET is appropriate
+ * so the Maximum Segment Current is not higher than these numbers:
+ * 		level	Max Current
+ *		  0			10mA
+ *		  1			20mA
+ *		  2			30mA
+ *
+ * The command is sent to all drivers.
+ */
+void LEDMatrixDriver::setScanLimit(uint8_t level)
+{
+	_sendCommand(SCAN_LIMIT | level);
+}
+
+/**
+ * Sets the Decode-Mode Register.
+ *
+ * Each set bit in mask enables "BCD Code B" decoding for a digit.
+ * When "BCD Code B" is enabled the 4 lower bits of a digit are parsed:
+ *    0-9  => The same digit is rendered
+ *    10   => A dash (-) is rendered.
+ *    11   => The letter "E" is rendered.
+ *    12   => The letter "H" is rendered.
+ *    13   => The letter "L" is rendered.
+ *    14   => The letter "P" is rendered.
+ *    15   => Blank display
+ * Bit 7 (0x80) still controls the decimal point (dot).
+ *
+ * The command is sent to all drivers.
+ */
+void LEDMatrixDriver::setDecode(uint8_t mask)
+{
+	_sendCommand(DECODE | mask);
+}
+
+/**
+ * Sets a digit to the specified value.
+ * Digits are numbered 0..(8*N-1).
+ * Digits 0..7 are in the first controller, digits 8..15 in the next, etc.
+ */
+void LEDMatrixDriver::setDigit(uint16_t digit, uint8_t value, bool dot)
+{
+	if (digit >= (8*N))
+		return;
+
+	// The frameBuffer is organized as 8 rows of N bytes.
+	uint8_t row = digit % 8;
+	uint8_t controller = digit / 8;
+
+	frameBuffer[row * N + controller] = value | (dot ? 1<<7 : 0);
+}
+
 void LEDMatrixDriver::_sendCommand(uint16_t command)
 {
 	SPI.beginTransaction(spiSettings);
