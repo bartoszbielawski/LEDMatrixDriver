@@ -10,3 +10,4 @@ Features:
 
 ## Contributors
 - Marko Oette	 - patches for Arduino AVR platform, example sketch
+- Søren Thing Andersen - support for 7-seg displays with examples
