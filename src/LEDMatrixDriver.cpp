@@ -42,20 +42,27 @@ LEDMatrixDriver::~LEDMatrixDriver()
 
 void LEDMatrixDriver::setPixel(uint16_t x, uint16_t y, bool enabled)
 {
-	if (y >= 8)
-		return;
-	if (x >= (8*N))
+	uint8_t* p = _getBufferPtr(x,y);
+	if (!p)
 		return;
 
-	uint16_t B = x >> 3;		//byte
 	uint16_t b = 7 - (x & 7);			//bit
 
-	uint8_t& v = frameBuffer[y*N + B];
-
 	if (enabled)
-		v |=  (1<<b);
+		*p |=  (1<<b);
 	else
-		v &= ~(1<<b);
+		*p &= ~(1<<b);
+}
+
+bool LEDMatrixDriver::getPixel(uint16_t x, uint16_t y) const
+{
+	uint8_t* p = _getBufferPtr(x,y);
+	if (!p)
+		return false;
+
+	uint16_t b = 7 - (x & 7);			//bit
+
+	return *p & (1 << b);
 }
 
 void LEDMatrixDriver::setColumn(uint16_t x, uint8_t value)
@@ -158,6 +165,19 @@ void LEDMatrixDriver::_displayRow(uint8_t row)
 	}
 	digitalWrite(ssPin, 1);
 	SPI.endTransaction();
+}
+
+uint8_t* LEDMatrixDriver::_getBufferPtr(uint16_t x, uint16_t y) const
+{
+	if (y >= 8)
+		return nullptr;
+	if (x >= (8*N))
+		return nullptr;
+
+	uint16_t B = x >> 3;		//byte
+	uint16_t b = 7 - (x & 7);	//bit
+
+	return frameBuffer + y*N + B;
 }
 
 void LEDMatrixDriver::display()
