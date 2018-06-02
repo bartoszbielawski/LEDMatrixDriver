@@ -7,6 +7,7 @@ A replacement for Arduino's LedControl library.
 - Writing to the display is controlled by the software,
 - Much, much faster (as it uses hardware SPI with soft SS)
 - Can use an external memory or self-allocated buffer
+- (Optional) support for Adafruit_GFX library - use -DUSE_ADAFTUIT_GFX to enable.
 
 ## Pin selection
 Each segment of the display needs 16 bits and they can all be shifted in at once. 

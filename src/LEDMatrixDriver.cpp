@@ -9,6 +9,9 @@
 #include <Arduino.h>
 
 LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
+#ifdef USE_ADAFRUIT_GFX
+	Adafruit_GFX(N*8, N),
+#endif
 	N(N),
 	spiSettings(5000000, MSBFIRST, SPI_MODE0),
 	frameBuffer(frameBuffer_),
@@ -175,7 +178,6 @@ uint8_t* LEDMatrixDriver::_getBufferPtr(uint16_t x, uint16_t y) const
 		return nullptr;
 
 	uint16_t B = x >> 3;		//byte
-	uint16_t b = 7 - (x & 7);	//bit
 
 	return frameBuffer + y*N + B;
 }
@@ -191,7 +193,6 @@ void LEDMatrixDriver::display()
 void LEDMatrixDriver::scroll( scrollDirection direction )
 {
 	int cnt = 0;
-	uint8_t* buf = NULL;
 	switch( direction )
 	{
 		case scrollDirection::scrollUp:

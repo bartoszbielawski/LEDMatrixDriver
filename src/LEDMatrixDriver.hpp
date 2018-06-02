@@ -21,7 +21,16 @@
 
 #include <SPI.h>
 
+#ifdef ESP32
+#include <cstring>
+#endif
+
+#ifdef USE_ADAFRUIT_GFX
+#include <Adafruit_GFX.h>
+class LEDMatrixDriver: public Adafruit_GFX
+#else
 class LEDMatrixDriver
+#endif
 {
 	//commands as defined in the datasheet
 	const static uint16_t ENABLE =		0x0C00;
@@ -41,6 +50,13 @@ class LEDMatrixDriver
 		LEDMatrixDriver(const LEDMatrixDriver& other) = delete;
 		LEDMatrixDriver(LEDMatrixDriver&& other) = delete;
 		LEDMatrixDriver& operator=(const LEDMatrixDriver& other) = delete;
+
+		#ifdef USE_ADAFRUIT_GFX
+		virtual void writePixel(int16_t x, int16_t y, uint16_t color) {setPixel(x,y,color);}
+		virtual void drawPixel(int16_t x, int16_t y, uint16_t color) {setPixel(x,y,color);}
+		virtual void endWrite(void) {if (not manualDisplayRefresh) display();}
+		void setManualDisplayRefresh(bool enabled) {manualDisplayRefresh = enabled;}
+		#endif
 
 		//all these commands work on ALL segments
 		void setEnabled(bool enabled);
@@ -92,6 +108,10 @@ class LEDMatrixDriver
 		uint8_t* frameBuffer;
 		bool selfAllocated;
 		uint8_t ssPin;
+
+		#ifdef USE_ADAFRUIT_GFX
+		bool manualDisplayRefresh = true;
+		#endif
 };
 
 #endif /* LEDMATRIXDRIVER_H_ */
