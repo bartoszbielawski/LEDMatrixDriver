@@ -43,7 +43,7 @@ LEDMatrixDriver::~LEDMatrixDriver()
 		delete[] frameBuffer;
 }
 
-void LEDMatrixDriver::setPixel(uint16_t x, uint16_t y, bool enabled)
+void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 {
 	uint8_t* p = _getBufferPtr(x,y);
 	if (!p)
@@ -57,7 +57,7 @@ void LEDMatrixDriver::setPixel(uint16_t x, uint16_t y, bool enabled)
 		*p &= ~(1<<b);
 }
 
-bool LEDMatrixDriver::getPixel(uint16_t x, uint16_t y) const
+bool LEDMatrixDriver::getPixel(int16_t x, int16_t y) const
 {
 	uint8_t* p = _getBufferPtr(x,y);
 	if (!p)
@@ -68,11 +68,9 @@ bool LEDMatrixDriver::getPixel(uint16_t x, uint16_t y) const
 	return *p & (1 << b);
 }
 
-void LEDMatrixDriver::setColumn(uint16_t x, uint8_t value)
-{
-	if (x >= (8*N))
-		return;
-
+void LEDMatrixDriver::setColumn(int16_t x, uint8_t value)
+{	
+	//no need to check x, will be checked by setPixel
 	for (uint8_t y = 0; y < 8; ++y)
 	{
 		setPixel(x, y, value & 1);
@@ -170,11 +168,11 @@ void LEDMatrixDriver::_displayRow(uint8_t row)
 	SPI.endTransaction();
 }
 
-uint8_t* LEDMatrixDriver::_getBufferPtr(uint16_t x, uint16_t y) const
+uint8_t* LEDMatrixDriver::_getBufferPtr(int16_t x, int16_t y) const
 {
-	if (y >= 8)
+	if ((y >= 8) or (y < 0))
 		return nullptr;
-	if (x >= (8*N))
+	if ((x >= (8*N)) or (x < 0))
 		return nullptr;
 
 	uint16_t B = x >> 3;		//byte
