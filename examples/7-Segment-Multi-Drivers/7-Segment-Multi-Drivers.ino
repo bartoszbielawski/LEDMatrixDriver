@@ -47,21 +47,21 @@ void LedDisplay(long X_value, long Y_value, long Z_value) {
   // Filling the char array's with long int value
   // sanity check for input. Must be in range of -9999999 to 9999999 and no buffer overrun I hope
   if (X_value < -9999999 || X_value > 9999999) { 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 8; i++) {
       charbufX[i] = '-';
     }
   }
   else dtostrf(X_value, 8, 0, charbufX);
 
   if (Y_value < -9999999 || Y_value > 9999999) {
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 8; i++) {
       charbufY[i] = '-';
     }
   }
   else dtostrf(Y_value, 8, 0, charbufY);
 
   if (Z_value < -9999999 || Z_value > 9999999) {
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 8; i++) {
       charbufZ[i] = '-';
     }
   }
