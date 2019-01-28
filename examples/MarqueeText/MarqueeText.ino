@@ -4,7 +4,7 @@
 // Example written 16.06.2017 by Marko Oette, www.oette.info
 
 // Define the ChipSelect pin for the led matrix (Dont use the SS or MISO pin of your Arduino!)
-// Other pins are arduino specific SPI pins (MOSI=DIN of the LEDMatrix and CLK) see https://www.arduino.cc/en/Reference/SPI
+// Other pins are Arduino specific SPI pins (MOSI=DIN, SCK=CLK of the LEDMatrix) see https://www.arduino.cc/en/Reference/SPI
 const uint8_t LEDMATRIX_CS_PIN = 9;
 
 // Define LED Matrix dimensions: 32x8, 16x8, or 8x8
