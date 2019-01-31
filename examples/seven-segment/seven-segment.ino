@@ -4,7 +4,7 @@
 // Example written 2017-09-30 by Søren Thing, https://github.com/Sthing.
 
 // Define the ChipSelect pin for the led matrix (Dont use the SS or MISO pin of your Arduino!)
-// Other pins are arduino specific SPI pins (MOSI=DIN of the LEDMatrix and CLK) see https://www.arduino.cc/en/Reference/SPI
+// Other pins are Arduino specific SPI pins (MOSI=DIN, SCK=CLK of the LEDMatrix) see https://www.arduino.cc/en/Reference/SPI
 const uint8_t LEDMATRIX_CS_PIN = 9;
 
 const int NO_OF_DRIVERS = 1; // Each MAX7219 driver can drive eight 7-segment displays.
@@ -33,7 +33,7 @@ void loop() {
       lmd.setDigit(digit, rest % 10, digit == 3);
       rest /= 10;
     }
-    lmd.display(); 
+    lmd.display();
     delay(10);
   }
   while (millis() - now < 1000);
@@ -47,6 +47,6 @@ void loop() {
   lmd.setDigit(2, LEDMatrixDriver::BCD_P);
   lmd.setDigit(1, LEDMatrixDriver::BCD_BLANK);
   lmd.setDigit(0, LEDMatrixDriver::BCD_DASH);
-  lmd.display(); 
+  lmd.display();
   delay(1000);
 }

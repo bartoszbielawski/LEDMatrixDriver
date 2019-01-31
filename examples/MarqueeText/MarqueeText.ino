@@ -7,19 +7,18 @@
 // Other pins are Arduino specific SPI pins (MOSI=DIN, SCK=CLK of the LEDMatrix) see https://www.arduino.cc/en/Reference/SPI
 const uint8_t LEDMATRIX_CS_PIN = 9;
 
-// Define LED Matrix dimensions: 32x8, 16x8, or 8x8
-const int LEDMATRIX_WIDTH    = 32;
-const int LEDMATRIX_HEIGHT   = 8;
-const int LEDMATRIX_SEGMENTS = LEDMATRIX_WIDTH / LEDMATRIX_HEIGHT;
+// Number of 8x8 segments you are connecting
+const int LEDMATRIX_SEGMENTS = 4;
+const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
+
+// The LEDMatrixDriver class instance
+LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 
 // Marquee text
 char text[] = "** LED MATRIX DEMO! ** (1234567890) ++ \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" ++ <$%/=?'.@,> --";
 
 // Marquee speed (lower nubmers = faster)
 const int ANIM_DELAY = 30;
-
-// The LEDMatrixDriver class instance
-LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 
 void setup() {
   // init the display
