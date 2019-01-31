@@ -1,7 +1,7 @@
 #include <LEDMatrixDriver.hpp>
 
 // This sketch will 'flood fill' your LED matrix using the hardware SPI driver Library by Bartosz Bielawski.
-// Example written 16.06.2017 by Marko Oette, www.oette.info 
+// Example written 16.06.2017 by Marko Oette, www.oette.info
 
 // Define the ChipSelect pin for the led matrix (Dont use the SS or MISO pin of your Arduino!)
 // Other pins are Arduino specific SPI pins (MOSI=DIN, SCK=CLK of the LEDMatrix) see https://www.arduino.cc/en/Reference/SPI
@@ -15,9 +15,9 @@ const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
 LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 
 void setup() {
-  // init the display
-  lmd.setEnabled(true);
-  lmd.setIntensity(2);   // 0 = low, 10 = high
+	// init the display
+	lmd.setEnabled(true);
+	lmd.setIntensity(2);   // 0 = low, 10 = high
 }
 
 int x=0, y=0;   // start top left

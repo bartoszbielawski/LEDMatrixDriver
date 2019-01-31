@@ -33,7 +33,7 @@ void loop() {
       lmd.setDigit(digit, rest % 10, digit == 3);
       rest /= 10;
     }
-    lmd.display(); 
+    lmd.display();
     delay(10);
   }
   while (millis() - now < 1000);
@@ -47,6 +47,6 @@ void loop() {
   lmd.setDigit(2, LEDMatrixDriver::BCD_P);
   lmd.setDigit(1, LEDMatrixDriver::BCD_BLANK);
   lmd.setDigit(0, LEDMatrixDriver::BCD_DASH);
-  lmd.display(); 
+  lmd.display();
   delay(1000);
 }

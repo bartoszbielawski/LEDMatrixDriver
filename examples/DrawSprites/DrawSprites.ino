@@ -1,7 +1,7 @@
 #include <LEDMatrixDriver.hpp>
 
 // This draw a moving sprite on your LED matrix using the hardware SPI driver Library by Bartosz Bielawski.
-// Example written 16.06.2017 by Marko Oette, www.oette.info 
+// Example written 16.06.2017 by Marko Oette, www.oette.info
 
 // Define the ChipSelect pin for the led matrix (Dont use the SS or MISO pin of your Arduino!)
 // Other pins are Arduino specific SPI pins (MOSI=DIN, SCK=CLK of the LEDMatrix) see https://www.arduino.cc/en/Reference/SPI
