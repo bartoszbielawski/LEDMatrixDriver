@@ -210,6 +210,9 @@ byte font[191][5] = {
 const uint8_t LEDMATRIX_CS_PIN = 9;
 const int LEDMATRIX_SEGMENTS = 4;
 const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
+
+//module reverse is set to true, remove the boolean parameter if
+//scrolling is appearing from the wrong side in each module.
 LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN, true);
 
 // set x to LEDMATRIX_WIDTH to bring text "into" the display.
