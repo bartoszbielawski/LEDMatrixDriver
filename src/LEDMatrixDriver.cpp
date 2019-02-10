@@ -41,6 +41,7 @@ LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev_, uint8_t
 LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
 	LEDMatrixDriver(N, ssPin, false, frameBuffer_) {}
 
+
 LEDMatrixDriver::~LEDMatrixDriver()
 {
 	if (selfAllocated)
