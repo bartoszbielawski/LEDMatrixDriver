@@ -28,3 +28,5 @@ Recommended pins for Arduino Uno:
 ## Contributors
 - Marko Oette - patches for Arduino AVR platform, example sketch
 - Søren Thing Andersen - support for 7-seg displays with examples
+- Scott Baker - examples clean-up
+- jamesgohl - module reversal code, another example
