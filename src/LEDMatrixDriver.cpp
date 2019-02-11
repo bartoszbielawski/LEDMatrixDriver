@@ -8,12 +8,13 @@
 #include "LEDMatrixDriver.hpp"
 #include <Arduino.h>
 
-LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev_, uint8_t* frameBuffer_):
 #ifdef USE_ADAFRUIT_GFX
 	Adafruit_GFX(N*8, N),
 #endif
 	N(N),
 	spiSettings(5000000, MSBFIRST, SPI_MODE0),
+	modRev(modRev_),
 	frameBuffer(frameBuffer_),
 	selfAllocated(frameBuffer_ == nullptr),
 	ssPin(ssPin)
@@ -37,6 +38,10 @@ LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_
 	_sendCommand(LEDMatrixDriver::SCAN_LIMIT | 7);	//all lines
 }
 
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
+	LEDMatrixDriver(N, ssPin, false, frameBuffer_) {}
+
+
 LEDMatrixDriver::~LEDMatrixDriver()
 {
 	if (selfAllocated)
@@ -45,11 +50,11 @@ LEDMatrixDriver::~LEDMatrixDriver()
 
 void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 {
-	uint8_t* p = _getBufferPtr(x,y);
+	uint8_t* p = _getBufferPtr(x,(modRev) ? 7 - y : y);
 	if (!p)
 		return;
 
-	uint16_t b = 7 - (x & 7);			//bit
+	uint16_t b = (modRev) ? (x & 7) : 7 - (x & 7);		//bit
 
 	if (enabled)
 		*p |=  (1<<b);
@@ -59,11 +64,11 @@ void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 
 bool LEDMatrixDriver::getPixel(int16_t x, int16_t y) const
 {
-	uint8_t* p = _getBufferPtr(x,y);
+	uint8_t* p = _getBufferPtr(x,(modRev) ? 7 - y : y);
 	if (!p)
 		return false;
 
-	uint16_t b = 7 - (x & 7);			//bit
+	uint16_t b = (modRev) ? (x & 7) : 7 - (x & 7);		//bit
 
 	return *p & (1 << b);
 }

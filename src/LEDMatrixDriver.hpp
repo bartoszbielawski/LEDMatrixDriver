@@ -43,6 +43,7 @@ class LEDMatrixDriver
 	public:
 		//with N segments and ssPin as SS,
 		//an already allocated buffer can be provided as well
+		LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev, uint8_t* frameBuffer = nullptr);
 		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer = nullptr);
 		~LEDMatrixDriver();
 
@@ -105,6 +106,7 @@ class LEDMatrixDriver
 
 		const uint8_t N;
 		SPISettings spiSettings;
+		bool modRev = false;
 		uint8_t* frameBuffer;
 		bool selfAllocated;
 		uint8_t ssPin;
