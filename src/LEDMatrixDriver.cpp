@@ -8,13 +8,13 @@
 #include "LEDMatrixDriver.hpp"
 #include <Arduino.h>
 
-LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev_, uint8_t* frameBuffer_):
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t segFlipFlags, uint8_t* frameBuffer_):
 #ifdef USE_ADAFRUIT_GFX
 	Adafruit_GFX(N*8, N),
 #endif
 	N(N),
 	spiSettings(5000000, MSBFIRST, SPI_MODE0),
-	modRev(modRev_),
+	segFlipFlags(segFlipFlags),
 	frameBuffer(frameBuffer_),
 	selfAllocated(frameBuffer_ == nullptr),
 	ssPin(ssPin)
@@ -39,7 +39,7 @@ LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev_, uint8_t
 }
 
 LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
-	LEDMatrixDriver(N, ssPin, false, frameBuffer_) {}
+	LEDMatrixDriver(N, ssPin, 0, frameBuffer_) {}
 
 LEDMatrixDriver::~LEDMatrixDriver()
 {
@@ -49,11 +49,11 @@ LEDMatrixDriver::~LEDMatrixDriver()
 
 void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 {
-	uint8_t* p = _getBufferPtr(x,(modRev) ? 7 - y : y);
+	uint8_t* p = _getBufferPtr(x,y);
 	if (!p)
 		return;
 
-	uint16_t b = (modRev) ? (x & 7) : 7 - (x & 7);		//bit
+	uint16_t b = 7 - (x & 7);		//bit
 
 	if (enabled)
 		*p |=  (1<<b);
@@ -63,11 +63,11 @@ void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 
 bool LEDMatrixDriver::getPixel(int16_t x, int16_t y) const
 {
-	uint8_t* p = _getBufferPtr(x,(modRev) ? 7 - y : y);
+	uint8_t* p = _getBufferPtr(x,y);
 	if (!p)
 		return false;
 
-	uint16_t b = (modRev) ? (x & 7) : 7 - (x & 7);		//bit
+	uint16_t b = 7 - (x & 7);		//bit
 
 	return *p & (1 << b);
 }
@@ -165,6 +165,21 @@ void LEDMatrixDriver::_displayRow(uint8_t row)
 	digitalWrite(ssPin, 0);
 	for (uint16_t d = 0; d < N; d++)
 	{
+		uint8_t col = frameBuffer[d + row*N];
+
+		if ((segFlipFlags & 1) != 0)
+		{	
+			// reverse the bits
+			uint8_t temp = 0;
+			for (int y = 0; y < 8; y++)
+				if ((col & (1 << y)) != 0)
+					temp |= (byte)(1 << (7 - y));
+			col = temp;
+		}
+		
+		if ((segFlipFlags & 2) != 0)
+			row = 7 - row;
+		
 		uint16_t cmd = ((row + 1) << 8) | frameBuffer[d + row*N];
 		SPI.transfer16(cmd);
 	}
