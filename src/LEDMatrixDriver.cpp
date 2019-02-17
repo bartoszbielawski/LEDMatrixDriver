@@ -3,6 +3,9 @@
  *
  *  Created on: 30.03.2017
  *      Author: Bartosz Bielawski
+ *
+ *  Modified on: 17.02.2019
+ *  	Editor: James Gohl
  */
 
 #include "LEDMatrixDriver.hpp"
