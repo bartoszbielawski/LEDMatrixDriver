@@ -8,13 +8,13 @@
 #include "LEDMatrixDriver.hpp"
 #include <Arduino.h>
 
-LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev_, uint8_t* frameBuffer_):
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, flipDirection moduleFlip, uint8_t* frameBuffer_):
 #ifdef USE_ADAFRUIT_GFX
 	Adafruit_GFX(N*8, N),
 #endif
 	N(N),
 	spiSettings(5000000, MSBFIRST, SPI_MODE0),
-	modRev(modRev_),
+	moduleFlip(static_cast<int>(moduleFlip)),
 	frameBuffer(frameBuffer_),
 	selfAllocated(frameBuffer_ == nullptr),
 	ssPin(ssPin)
@@ -39,7 +39,7 @@ LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev_, uint8_t
 }
 
 LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer_):
-	LEDMatrixDriver(N, ssPin, false, frameBuffer_) {}
+	LEDMatrixDriver(N, ssPin, flipDirection::flipNone, frameBuffer_) {}
 
 
 LEDMatrixDriver::~LEDMatrixDriver()
@@ -50,11 +50,11 @@ LEDMatrixDriver::~LEDMatrixDriver()
 
 void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 {
-	uint8_t* p = _getBufferPtr(x,(modRev) ? 7 - y : y);
+	uint8_t* p = _getBufferPtr(x,y);
 	if (!p)
 		return;
 
-	uint16_t b = (modRev) ? (x & 7) : 7 - (x & 7);		//bit
+	uint16_t b = 7 - (x & 7);		//bit
 
 	if (enabled)
 		*p |=  (1<<b);
@@ -64,11 +64,11 @@ void LEDMatrixDriver::setPixel(int16_t x, int16_t y, bool enabled)
 
 bool LEDMatrixDriver::getPixel(int16_t x, int16_t y) const
 {
-	uint8_t* p = _getBufferPtr(x,(modRev) ? 7 - y : y);
+	uint8_t* p = _getBufferPtr(x,y);
 	if (!p)
 		return false;
 
-	uint16_t b = (modRev) ? (x & 7) : 7 - (x & 7);		//bit
+	uint16_t b = 7 - (x & 7);		//bit
 
 	return *p & (1 << b);
 }
@@ -160,13 +160,32 @@ void LEDMatrixDriver::_sendCommand(uint16_t command)
 	SPI.endTransaction();
 }
 
+uint8_t LEDMatrixDriver::_reverseBits(uint8_t n)
+{
+	uint8_t x;
+	for(auto i = 7; n; ) {
+		x |= (n & 1) << i;
+		n >>= 1;
+		-- i;
+	}
+	return x;
+}
+	
 void LEDMatrixDriver::_displayRow(uint8_t row)
 {
 	SPI.beginTransaction(spiSettings);
 	digitalWrite(ssPin, 0);
 	for (uint16_t d = 0; d < N; d++)
 	{
-		uint16_t cmd = ((row + 1) << 8) | frameBuffer[d + row*N];
+		uint8_t col = frameBuffer[d + row*N];
+
+		if ((moduleFlip & static_cast<int>(flipDirection::flipColumn)) != 0)
+			col = _reverseBits(col);
+		
+		if ((moduleFlip & static_cast<int>(flipDirection::flipRow)) !=0)
+			row = 7 - row;
+		
+		uint16_t cmd = ((row + 1) << 8) | col;
 		SPI.transfer16(cmd);
 	}
 	digitalWrite(ssPin, 1);
