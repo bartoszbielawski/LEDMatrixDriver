@@ -41,9 +41,17 @@ class LEDMatrixDriver
 	
 	
 	public:
+		enum class flipDirection 
+		{
+			flipNone 	= 0 << 0,
+			flipColumn 	= 1 << 1,
+			flipRow 	= 1 << 2,
+		};	
+		friend flipDirection operator|(flipDirection a, flipDirection b) {return static_cast<flipDirection>(static_cast<int>(a) | static_cast<int>(b));}
+
 		//with N segments and ssPin as SS,
 		//an already allocated buffer can be provided as well
-		LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev, uint8_t* frameBuffer = nullptr);
+		LEDMatrixDriver(uint8_t N, uint8_t ssPin, flipDirection moduleFlip, uint8_t* frameBuffer = nullptr);
 		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer = nullptr);
 		~LEDMatrixDriver();
 
@@ -103,10 +111,11 @@ class LEDMatrixDriver
 		uint8_t* _getBufferPtr(int16_t x, int16_t y) const;
 		void _sendCommand(uint16_t command);
 		void _displayRow(uint8_t row);
+		uint8_t _reverseBits(uint8_t n);
 
 		const uint8_t N;
 		SPISettings spiSettings;
-		bool modRev = false;
+		uint8_t moduleFlip;
 		uint8_t* frameBuffer;
 		bool selfAllocated;
 		uint8_t ssPin;
