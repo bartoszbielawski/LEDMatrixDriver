@@ -11,8 +11,11 @@ const uint8_t LEDMATRIX_CS_PIN = 9;
 const int LEDMATRIX_SEGMENTS = 4;
 const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
 
+// If your display is backwards (left to right) and jumbled set this to true
+bool reverse_display = false;
+
 // The LEDMatrixDriver class instance
-LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
+LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN, reverse_display);
 
 void setup() {
   // init the display

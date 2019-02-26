@@ -208,15 +208,19 @@ byte font[191][5] = {
 // Define the ChipSelect pin for the led matrix (Dont use the SS or MISO pin of your Arduino!)
 // Other pins are Arduino specific SPI pins (MOSI=DIN, SCK=CLK of the LEDMatrix) see https://www.arduino.cc/en/Reference/SPI
 const uint8_t LEDMATRIX_CS_PIN = 9;
+
+// Number of 8x8 segments you are connecting
 const int LEDMATRIX_SEGMENTS = 4;
 const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
 
-//module reverse is set to true, remove the boolean parameter if
-//scrolling is appearing from the wrong side in each module.
-LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN, true);
+// If your display is backwards (left to right) and jumbled set this to true
+bool reverse_display = false;
+
+// The LEDMatrixDriver class instance
+LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN, reverse_display);
 
 // set x to LEDMATRIX_WIDTH to bring text "into" the display.
-int x = LEDMATRIX_WIDTH, y = 0; 
+int x = LEDMATRIX_WIDTH, y = 0;
 uint32_t scrollTimerStamp = 0;
 
 const int CHAR_WIDTH = sizeof(font[0]);
@@ -242,7 +246,7 @@ void setup() {
 
 void loop()
 {
-  // using a 
+  // using a
   if (millis() < scrollTimerStamp)
     return;
 
@@ -325,13 +329,13 @@ int getCharWidth(byte asc)
     }
     //give extra spacing for .
     if (asc == 14)
-      c_Width++;  
-  
+      c_Width++;
+
     return c_Width;
   }
 }
 
-// calculates the text width using variable character width and CHAR_SPACING and 
+// calculates the text width using variable character width and CHAR_SPACING and
 int getTextWidth(char* text)
 {
   int t_Width = 0;
