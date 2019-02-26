@@ -20,8 +20,9 @@ void setup() {
   lmd.setIntensity(2);   // 0 = low, 10 = high
 }
 
-int x=-1, y=0;   // start top left
-bool s = true;  // start with led on
+int start_x = -8;           // Start off to the left
+int x       = start_x, y=0; // start top left
+bool s      = true;         // start with led on
 
 byte a[8]={ B00011000,
             B00100100,
@@ -111,8 +112,9 @@ void loop() {
   lmd.display();
   delay(ANIM_DELAY);
 
-  if( x > LEDMATRIX_WIDTH )
-    x= -1;
+  if( x > LEDMATRIX_WIDTH ) {
+    x = start_x;
+  }
 }
 
 void drawSprite( byte* sprite, int x, int y, int width, int height )
