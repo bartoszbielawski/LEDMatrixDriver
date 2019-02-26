@@ -64,7 +64,7 @@ class LEDMatrixDriver
 		void setIntensity(uint8_t level);
 		void setPixel(int16_t x, int16_t y, bool enabled);
 		bool getPixel(int16_t x, int16_t y) const;
-		void setColumn(int16_t x, uint8_t value);
+		void setColumn(int16_t x, bool value);
 		uint8_t getSegments() const {return N;}
 		uint8_t* getFrameBuffer() const {return frameBuffer;}
 

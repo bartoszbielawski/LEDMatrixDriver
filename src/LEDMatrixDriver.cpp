@@ -73,13 +73,12 @@ bool LEDMatrixDriver::getPixel(int16_t x, int16_t y) const
 	return *p & (1 << b);
 }
 
-void LEDMatrixDriver::setColumn(int16_t x, uint8_t value)
-{	
+void LEDMatrixDriver::setColumn(int16_t x, bool value)
+{
 	//no need to check x, will be checked by setPixel
-	for (uint8_t y = 0; y < 8; ++y)
+	for (uint8_t y = 0; y < 8; y++)
 	{
-		setPixel(x, y, value & 1);
-		value >>= 1;
+		setPixel(x, y, value);
 	}
 }
 
