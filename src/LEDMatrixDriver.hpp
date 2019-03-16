@@ -41,10 +41,14 @@ class LEDMatrixDriver
 	
 	
 	public:
+		const static uint8_t INVERT_SEGMENT_X = 1;
+		const static uint8_t INVERT_DISPLAY_X = 2;
+		const static uint8_t INVERT_Y = 4;
+
 		//with N segments and ssPin as SS,
-		//an already allocated buffer can be provided as well
-		LEDMatrixDriver(uint8_t N, uint8_t ssPin, bool modRev, uint8_t* frameBuffer = nullptr);
-		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t* frameBuffer = nullptr);
+		//flags describe segment orientation (optional)
+		//an already allocated buffer can be provided as well (optional)
+		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags = 0, uint8_t* frameBuffer = nullptr);
 		~LEDMatrixDriver();
 
 		//we don't want to copy the object
@@ -64,8 +68,10 @@ class LEDMatrixDriver
 		void setIntensity(uint8_t level);
 		void setPixel(int16_t x, int16_t y, bool enabled);
 		bool getPixel(int16_t x, int16_t y) const;
+		//sets pixels in the column acording to value (LSB => y=0)
 		void setColumn(int16_t x, uint8_t value);
 		uint8_t getSegments() const {return N;}
+		
 		uint8_t* getFrameBuffer() const {return frameBuffer;}
 
 		//functions for 7-segment displays
@@ -106,7 +112,7 @@ class LEDMatrixDriver
 
 		const uint8_t N;
 		SPISettings spiSettings;
-		bool modRev = false;
+		uint8_t flags;
 		uint8_t* frameBuffer;
 		bool selfAllocated;
 		uint8_t ssPin;
