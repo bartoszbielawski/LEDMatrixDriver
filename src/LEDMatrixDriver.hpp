@@ -49,6 +49,9 @@ class LEDMatrixDriver
 		//flags describe segment orientation (optional)
 		//an already allocated buffer can be provided as well (optional)
 		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags = 0, uint8_t* frameBuffer = nullptr);
+		#ifdef USE_ADAFRUIT_GFX
+		virtual
+		#endif
 		~LEDMatrixDriver();
 
 		//we don't want to copy the object
@@ -65,6 +68,7 @@ class LEDMatrixDriver
 
 		//all these commands work on ALL segments
 		void setEnabled(bool enabled);
+		//display brightness: 0 - 15
 		void setIntensity(uint8_t level);
 		void setPixel(int16_t x, int16_t y, bool enabled);
 		bool getPixel(int16_t x, int16_t y) const;
@@ -75,6 +79,7 @@ class LEDMatrixDriver
 		uint8_t* getFrameBuffer() const {return frameBuffer;}
 
 		//functions for 7-segment displays
+		//number of digits displayed (0 -> 1 digit, 7 -> 8 digits)
 		void setScanLimit(uint8_t level);
 		void setDecode(uint8_t mask);
 		void setDigit(uint16_t digit, uint8_t value, bool dot = false);
