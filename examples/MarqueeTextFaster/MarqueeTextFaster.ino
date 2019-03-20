@@ -92,7 +92,7 @@ uint64_t marqueeDelayTimestamp = 0;
  *    for(int i = 0; i < 94; i++)
  *    {
  *      Serial.print(cur_idx);
- *      Serial.println(",");
+ *      Serial.print(",");
  *      Serial.flush();
  *      cur_idx += pgm_read_byte(&(font[cur_idx])) + 1;
  *    }
