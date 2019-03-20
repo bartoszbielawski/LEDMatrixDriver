@@ -43,9 +43,9 @@
 // Set the Chip Select (CS) pin for the led matrix
 const uint8_t LEDMATRIX_CS_PIN = 9;
 // Set the number of modules you have daisy-chained together.
-const int LEDMATRIX_SEGMENTS = 8;
+const uint8_t LEDMATRIX_SEGMENTS = 8;
 // Width of entire display, where 8 is the number of pixels on a single module.
-const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
+const uint16_t LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
 
 /*
  *  Initialise LEDMatrixDriver
@@ -67,7 +67,7 @@ LEDMatrixDriver led(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN, LEDMatrixDriver::INVER
  *    
  *  Set SCROLL_DELAY to 0 to see the efficiency of this example.
  */
-const int SCROLL_DELAY = 30;
+const uint16_t SCROLL_DELAY = 30;
 // No need to alter this.
 uint64_t marqueeDelayTimestamp = 0;
 
