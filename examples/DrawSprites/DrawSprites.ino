@@ -9,7 +9,8 @@ const uint8_t LEDMATRIX_CS_PIN = 9;
 
 // Number of 8x8 segments you are connecting
 const int LEDMATRIX_SEGMENTS = 4;
-const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * 8;
+const int SEGMENT_WIDTH = 8;
+const int LEDMATRIX_WIDTH    = LEDMATRIX_SEGMENTS * SEGMENT_WIDTH;
 
 // The LEDMatrixDriver class instance
 LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
@@ -17,11 +18,12 @@ LEDMatrixDriver lmd(LEDMATRIX_SEGMENTS, LEDMATRIX_CS_PIN);
 void setup() {
   // init the display
   lmd.setEnabled(true);
-  lmd.setIntensity(2);   // 0 = low, 10 = high
+  lmd.setIntensity(2);   // 0 = low, 15 = high
 }
 
-int x=-1, y=0;   // start top left
-bool s = true;  // start with led on
+int x = -SEGMENT_WIDTH; // start off to the left
+int y = 0;              // start top left
+bool s = true;          // start with led on
 
 byte a[8]={ B00011000,
             B00100100,
@@ -112,7 +114,7 @@ void loop() {
   delay(ANIM_DELAY);
 
   if( x > LEDMATRIX_WIDTH )
-    x= -1;
+    x = -SEGMENT_WIDTH;
 }
 
 void drawSprite( byte* sprite, int x, int y, int width, int height )
