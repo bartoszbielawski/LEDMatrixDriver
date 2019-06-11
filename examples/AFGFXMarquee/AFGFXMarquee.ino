@@ -15,6 +15,11 @@
  */
 
 #include <LEDMatrixDriver.hpp>
+
+#ifndef USE_ADAFTUIT_GFX
+#error "Adafruit_GFX code not enabled! Check readme!"
+#endif
+
 #include <afbuffer.h>
 
 // Set the Chip Select (CS) pin for the led matrix
