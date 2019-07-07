@@ -100,7 +100,7 @@ class LEDMatrixDriver
 		};
 		
 		//scroll the framebuffer 1 pixel in the given direction
-		void scroll( scrollDirection direction );
+		void scroll(scrollDirection direction, bool wrap=true);
 
 		// BCD Code B values
 		const static uint8_t BCD_DASH =     0x0A;
