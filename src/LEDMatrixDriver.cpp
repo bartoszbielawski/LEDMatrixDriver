@@ -226,22 +226,35 @@ void LEDMatrixDriver::display()
 	}
 }
 
-void LEDMatrixDriver::scroll( scrollDirection direction )
+void LEDMatrixDriver::scroll(scrollDirection direction, bool wrap)
 {
-	int cnt = 0;
 	switch( direction )
 	{
 		case scrollDirection::scrollUp:
-			cnt = 7*(N);	// moving 7 rows of N segments
-			memmove(frameBuffer, frameBuffer + N, cnt);
-			memset(frameBuffer+cnt, 0, N);		// Clear last row
+		{
+			uint8_t tmp[N];							//space for extra row
+			if (wrap)
+				memcpy(tmp, frameBuffer, N);		//save the first row
+			else
+				memset(tmp, 0, N);					//or zero the memory
+			
+			memmove(frameBuffer, frameBuffer + N, 7*N);	//shift 7 rows
+			memcpy(frameBuffer + 7*N, tmp, N);		//last row is zeros or copy of the first row
 			break;
+		}
 
 		case scrollDirection::scrollDown:
-			cnt = 7*N; // moving 7 rows of N segments
-			memmove(frameBuffer+N, frameBuffer, cnt);
-			memset(frameBuffer, 0, N);		// Clear first row
+		{
+			uint8_t tmp[N];
+			if (wrap) 
+				memcpy(tmp, frameBuffer + 7*N, N);
+			else
+				memset(tmp, 0, N);
+			
+			memmove(frameBuffer+N, frameBuffer, 7*N);
+			memcpy(frameBuffer, tmp, N);
 			break;
+		}
 
 		case scrollDirection::scrollRight:
 			// Scrolling right needs to be done by bit shifting every uint8_t in the frame buffer
@@ -256,6 +269,7 @@ void LEDMatrixDriver::scroll( scrollDirection direction )
 					v = (carry << 7) | (v >> 1);
 					carry = newCarry;
 				}
+				if (wrap) setPixel(0, y, carry);
 			}
 			break;
 
@@ -272,6 +286,7 @@ void LEDMatrixDriver::scroll( scrollDirection direction )
 					v = (carry >> 7) | (v << 1);
 					carry = newCarry;
 				}
+				if (wrap) setPixel(8*N-1, y, carry);
 			}
 			break;
 	}
