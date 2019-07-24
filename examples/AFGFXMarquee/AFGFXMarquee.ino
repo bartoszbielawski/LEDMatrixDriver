@@ -16,7 +16,7 @@
 
 #include <LEDMatrixDriver.hpp>
 
-#ifndef USE_ADAFTUIT_GFX
+#ifndef USE_ADAFRUIT_GFX
 #error "Adafruit_GFX code not enabled! Check readme!"
 #endif
 
