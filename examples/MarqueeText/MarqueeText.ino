@@ -20,6 +20,10 @@ char text[] = "** LED MATRIX DEMO! ** (1234567890) ++ \"ABCDEFGHIJKLMNOPQRSTUVWX
 // Marquee speed (lower nubmers = faster)
 const int ANIM_DELAY = 30;
 
+// Only un-comment one of the lines below
+#define L2R		//Left to right scroll		
+//#define R2L		//Right to left scroll
+
 void setup() {
   // init the display
   lmd.setEnabled(true);
@@ -106,10 +110,18 @@ void loop()
 	// Wait to let the human read the display
 	delay(ANIM_DELAY);
 
-	// Advance to next coordinate
-	if( --x < len * -8 ) {
-		x = LEDMATRIX_WIDTH;
-	}
+	#ifdef L2R
+	//For left to right scroll
+		if( ++x > LEDMATRIX_WIDTH ){
+		    x = -len*8;
+		}
+	#endif
+	#ifdef R2L
+	//For right to left scroll
+		if( --x < len * -8 ) {
+		    x = LEDMATRIX_WIDTH;
+		}
+	#endif 
 }
 
 
