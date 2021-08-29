@@ -38,17 +38,23 @@ class LEDMatrixDriver
 	const static uint16_t INTENSITY =	0x0A00;
 	const static uint16_t SCAN_LIMIT =	0x0B00;
 	const static uint16_t DECODE =		0x0900;
-	
-	
+
 	public:
 		const static uint8_t INVERT_SEGMENT_X = 1;
 		const static uint8_t INVERT_DISPLAY_X = 2;
 		const static uint8_t INVERT_Y = 4;
 
+		const static uint32_t SUGGESTED_SPI_FREQ = 5000000;	
+
 		//with N segments and ssPin as SS,
 		//flags describe segment orientation (optional)
 		//an already allocated buffer can be provided as well (optional)
 		LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags = 0, uint8_t* frameBuffer = nullptr);
+	
+		//a more generic constructor that allows users to define which bus will be used and bus frequency
+		//other argumentas are the same as the ones for the previous constructor
+		LEDMatrixDriver(SPIClass& spi, uint8_t ssPin, uint32_t spiFreq, uint8_t N, uint8_t flags = 0, uint8_t* frameBuffer = nullptr);
+
 		#ifdef USE_ADAFRUIT_GFX
 		virtual
 		#endif
@@ -114,14 +120,17 @@ class LEDMatrixDriver
 		uint8_t* _getBufferPtr(int16_t x, int16_t y) const;
 		void _sendCommand(uint16_t command);
 		void _displayRow(uint8_t row);
+		void _init(bool initializeSpi);
+
+		SPIClass& spi;
+		uint8_t ssPin;
+		uint32_t frequency;
 
 		const uint8_t N;
-		SPISettings spiSettings;
 		uint8_t flags;
 		uint8_t* frameBuffer;
 		bool selfAllocated;
-		uint8_t ssPin;
-
+		
 		#ifdef USE_ADAFRUIT_GFX
 		bool manualDisplayRefresh = true;
 		#endif
