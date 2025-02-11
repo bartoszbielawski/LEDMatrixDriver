@@ -8,12 +8,14 @@
 #include "LEDMatrixDriver.hpp"
 #include <Arduino.h>
 
-LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags, uint8_t* fb):
+
+LEDMatrixDriver::LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t N, uint8_t ssPin, , uint8_t flags, uint8_t* fb)
 #ifdef USE_ADAFRUIT_GFX
 	Adafruit_GFX(N*8, N),
 #endif
+	spi(spi),
+	spiSettings(spiSettings),
 	N(N),
-	spiSettings(5000000, MSBFIRST, SPI_MODE0),
 	flags(flags),
 	frameBuffer(fb),
 	selfAllocated(fb == nullptr),
@@ -26,16 +28,32 @@ LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags, uint8_
 
 	pinMode(ssPin, OUTPUT);
 	digitalWrite(ssPin, 1);
-	SPI.begin();
-#ifdef ESP8266
-	SPI.setHwCs(false);
-#endif
+
+	// initialize SPI only if it's the default one,
+	// otherwise it's the user's responsibility to initialize it
+	if (spi == SPI)
+		spi.begin();
+	
+	// TODO: check for other platforms (ESP32...?)
+	#ifdef ESP8266
+	spi.setHwCs(false);
+	#endif
 
 	setEnabled(false);
 	setIntensity(0);
 	_sendCommand(LEDMatrixDriver::TEST);			//no test
 	_sendCommand(LEDMatrixDriver::DECODE);			//no decode
 	_sendCommand(LEDMatrixDriver::SCAN_LIMIT | 7);	//all lines
+}
+
+
+LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags, uint8_t* fb):
+#ifdef USE_ADAFRUIT_GFX
+	Adafruit_GFX(N*8, N),
+#endif
+	LEDMatrixDriver(SPI, SPISettings(5000000, MSBFIRST, SPI_MODE0), N, ssPin, flags, fb)	
+{
+	//call the other constructor, everything should be initialized
 }
 
 LEDMatrixDriver::~LEDMatrixDriver()
@@ -158,15 +176,15 @@ void LEDMatrixDriver::setDigit(uint16_t digit, uint8_t value, bool dot)
 
 void LEDMatrixDriver::_sendCommand(uint16_t command)
 {
-	SPI.beginTransaction(spiSettings);
+	spi.beginTransaction(spiSettings);
 	digitalWrite(ssPin, 0);
 	//send the same command to all segments
 	for (uint8_t i = 0; i < N; ++i)
 	{
-		SPI.transfer16(command);
+		spi.transfer16(command);
 	}
 	digitalWrite(ssPin, 1);
-	SPI.endTransaction();
+	spi.endTransaction();
 }
 
 //a helper function used to reverse bits in a byte
@@ -190,7 +208,7 @@ void LEDMatrixDriver::_displayRow(uint8_t row)
 	int16_t to =   display_x_inverted ? -1  : N;		//where to stop
 	int16_t step = display_x_inverted ? -1 :  1;		//directon
 
-	SPI.beginTransaction(spiSettings);
+	spi.beginTransaction(spiSettings);
 	digitalWrite(ssPin, 0);
 
 	for (int16_t d = from; d != to; d += step)
@@ -199,11 +217,11 @@ void LEDMatrixDriver::_displayRow(uint8_t row)
 		if (segment_x_inverted)
 			reverse(data);
 		uint16_t cmd = ((address_row + 1) << 8) | data;
-		SPI.transfer16(cmd);
+		spi.transfer16(cmd);
 	}
 
 	digitalWrite(ssPin, 1);
-	SPI.endTransaction();
+	spi.endTransaction();
 }
 
 uint8_t* LEDMatrixDriver::_getBufferPtr(int16_t x, int16_t y) const
