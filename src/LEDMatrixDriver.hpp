@@ -54,7 +54,7 @@ class LEDMatrixDriver
 		//use this constructor if you want to specify which SPI to use and its settings
 		//the default settings are: 500000 Hz, MSBFIRST, SPI_MODE0
 		//other parameters are the same as in the previous constructor
-		LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t N, uint8_t ssPin, , uint8_t flags = 0, uint8_t* fb = nullptr);
+		LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t N, uint8_t ssPin, uint8_t flags = 0, uint8_t* fb = nullptr);
 
 		#ifdef USE_ADAFRUIT_GFX
 		virtual
@@ -136,3 +136,4 @@ class LEDMatrixDriver
 };
 
 #endif /* LEDMATRIXDRIVER_H_ */
+
