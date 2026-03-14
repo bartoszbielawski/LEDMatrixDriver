@@ -31,7 +31,7 @@ LEDMatrixDriver::LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t
 
 	// initialize SPI only if it's the default one,
 	// otherwise it's the user's responsibility to initialize it
-	if (spi == SPI)
+	if (&spi == &SPI)
 		spi.begin();
 	
 	// TODO: check for other platforms (ESP32...?)
