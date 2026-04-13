@@ -9,7 +9,7 @@
 #include <Arduino.h>
 
 
-LEDMatrixDriver::LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t N, uint8_t ssPin, , uint8_t flags, uint8_t* fb):
+LEDMatrixDriver::LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t N, uint8_t ssPin, uint8_t flags, uint8_t* fb):
 #ifdef USE_ADAFRUIT_GFX
 	Adafruit_GFX(N*8, N),
 #endif
