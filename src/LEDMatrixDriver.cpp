@@ -48,9 +48,6 @@ LEDMatrixDriver::LEDMatrixDriver(SPIClass& spi, SPISettings spiSettings, uint8_t
 
 
 LEDMatrixDriver::LEDMatrixDriver(uint8_t N, uint8_t ssPin, uint8_t flags, uint8_t* fb):
-#ifdef USE_ADAFRUIT_GFX
-	Adafruit_GFX(N*8, N),
-#endif
 	LEDMatrixDriver(SPI, SPISettings(5000000, MSBFIRST, SPI_MODE0), N, ssPin, flags, fb)	
 {
 	//call the other constructor, everything should be initialized
